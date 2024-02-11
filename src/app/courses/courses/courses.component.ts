@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Course } from '../model/course';
+import { CourseService } from '../services/course.service';
 
 @Component({
   selector: 'app-courses',
@@ -13,8 +14,9 @@ export class CoursesComponent {
   ];
   displayedColumns = ['name', 'category'];
 
-  constructor() {
-    // this.courses = [];
+
+  constructor(private coursesService: CourseService) {
+
   }
 
 }
