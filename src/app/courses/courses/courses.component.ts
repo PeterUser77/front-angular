@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { Course } from '../model/course';
 import { CourseService } from '../services/course.service';
-import { Observable } from 'rxjs';
+import { Observable, catchError, of } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { ErrorDialogComponent } from '../../shared/components/error-dialog/error-dialog.component';
 
 @Component({
   selector: 'app-courses',
@@ -13,10 +15,24 @@ export class CoursesComponent {
   public courses$: Observable<Course[]>;
   displayedColumns = ['name', 'category'];
 
-  constructor(private coursesService: CourseService) {
-    this.courses$ = this.coursesService.findAll();
+  constructor(
+    private coursesService: CourseService,
+    public dialog: MatDialog
+  ) {
+
+    this.courses$ = this.coursesService.findAll().pipe(
+      catchError(error => {
+        this.onError('Could not load courses.')
+        return of([])
+      })
+    );
+
   }
 
-  ngOnInit(): void { }
+  onError(errorMsg: String) {
+    this.dialog.open(ErrorDialogComponent, {
+      data: errorMsg
+    })
+  }
 
 }
