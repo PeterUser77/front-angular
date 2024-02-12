@@ -1,6 +1,6 @@
 [
-  {"_id": "1", "name": "Angular", "category": "Frontend"},
-  {"_id": "2", "name": "Spring", "category": "Backend"},
-  {"_id": "3", "name": "Angular & Spring", "category": "Fullstack"},
-  {"_id": "4", "name": "MySQL", "category": "Banco de Dados"}
+  {"_id": "1", "name": "Angular", "category": "front-end"},
+  {"_id": "2", "name": "Spring", "category": "back-end"},
+  {"_id": "3", "name": "Angular & Spring", "category": "full-stack"},
+  {"_id": "4", "name": "MySQL", "category": "data-base"}
 ]
