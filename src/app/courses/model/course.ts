@@ -1,7 +1,7 @@
 export interface Course {
 
-  _id: String;
-  name: String;
-  category: String;
+  _id: string;
+  name: string;
+  category: string;
 
 }

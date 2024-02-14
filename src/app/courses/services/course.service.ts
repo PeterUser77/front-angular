@@ -19,5 +19,11 @@ export class CourseService {
       );
   }
 
+  add(record: Course) {
+    return this.httpClient.post<Course>(this.API, record)
+      .pipe(
+        first()
+      );
+  }
 
 }
