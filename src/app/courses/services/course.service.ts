@@ -19,7 +19,7 @@ export class CourseService {
       );
   }
 
-  add(record: Course) {
+  add(record: Partial<Course>) {
     return this.httpClient.post<Course>(this.API, record)
       .pipe(
         first()
