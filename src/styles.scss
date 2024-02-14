@@ -3,7 +3,7 @@
 
 $custom-app-primary: mat.define-palette(mat.$gray-palette, 900);
 $custom-app-secondary: mat.define-palette(
-  mat.$gray-palette, 600);
+  mat.$gray-palette, 400);
 $custom-app-warn: mat.define-palette(mat.$amber-palette, A700);
 
 $custom-theme: mat.define-dark-theme((
