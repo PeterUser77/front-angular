@@ -1,0 +1,10 @@
+mat-table {
+  overflow: auto;
+  max-height: 600px;
+  border-radius: 5px;
+}
+
+.action-column {
+  justify-content: right;
+  padding: 5px;
+}
