@@ -24,11 +24,8 @@ export class CoursesListComponent {
 
   onEdit(course: Course) {
     this.edit.emit(course)
-    console.log('edicao');
   }
 
   onDelete() {
-
-    console.log('delete')
   }
 }

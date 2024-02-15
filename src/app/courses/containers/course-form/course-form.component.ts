@@ -2,7 +2,9 @@ import { Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { NonNullableFormBuilder } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute } from '@angular/router';
 import { CourseService } from '../../services/course.service';
+import { Course } from '../../model/course';
 
 @Component({
   selector: 'app-course-form',
@@ -12,6 +14,7 @@ import { CourseService } from '../../services/course.service';
 export class CourseFormComponent {
 
   formGroup = this.formBuilder.group({
+    _id: '',
     name: [''],
     category: ['']
   });
@@ -20,10 +23,19 @@ export class CourseFormComponent {
     private formBuilder: NonNullableFormBuilder,
     private courseService: CourseService,
     private snack: MatSnackBar,
-    private location: Location
-    // public dialog: MatDialog
+    private location: Location,
+    private route: ActivatedRoute
   ) {
 
+  }
+
+  ngOnInit(): void {
+    const course: Course = this.route.snapshot.data['course'];
+    this.formGroup.setValue({
+      _id: course._id,
+      name: course.name,
+      category: course.category
+    });
   }
 
   onAdd() {
@@ -38,7 +50,7 @@ export class CourseFormComponent {
 
   onSuccess() {
     this.snack.open(
-      'Course add with success.',
+      'Course saved with success.',
       '',
       { duration: 5000 }
     );
