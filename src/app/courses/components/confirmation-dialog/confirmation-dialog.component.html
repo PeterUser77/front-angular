@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>
+  {{ data }}
+</h2>
+<mat-dialog-actions>
+  <button
+    mat-flat-button
+    (click)="onConfirm(true)"
+  >Yes</button>
+  <button
+    mat-raised-button
+    (click)="onConfirm(false)"
+    color="primary"
+  >No</button>
+</mat-dialog-actions>
