@@ -26,10 +26,8 @@ export class CourseService {
 
   add(record: Partial<Course>) {
     if(record._id) {
-      // console.log('update');
       return this.update(record);
     }
-    // console.log('create');
     return this.create(record);
   }
 
@@ -45,6 +43,10 @@ export class CourseService {
       .pipe(
         first()
       );
+  }
+
+  delete(id: string) {
+    return this.httpClient.delete(`${this.API}/${id}`).pipe(first());
   }
 
 }
