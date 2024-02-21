@@ -1,36 +1,20 @@
 import { Location } from '@angular/common';
-import { Component } from '@angular/core';
-import { NonNullableFormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { CourseService } from '../../services/course.service';
 import { Course } from '../../model/course';
+import { Lesson } from '../../model/lesson';
 
 @Component({
   selector: 'app-course-form',
   templateUrl: './course-form.component.html',
   styleUrl: './course-form.component.scss'
 })
-export class CourseFormComponent {
+export class CourseFormComponent implements OnInit {
 
-  formGroup = this.formBuilder.group({
-    _id: '',
-    name: [
-      '',
-      [
-        Validators.required,
-        Validators.minLength(2),
-        Validators.maxLength(50)]
-      ],
-    category: [
-      '',
-      [
-        Validators.required,
-        Validators.minLength(10),
-        Validators.maxLength(100)
-      ]
-    ]
-  });
+  formGroup!: FormGroup;
 
   constructor(
     private formBuilder: NonNullableFormBuilder,
@@ -38,17 +22,63 @@ export class CourseFormComponent {
     private snack: MatSnackBar,
     private location: Location,
     private route: ActivatedRoute
-  ) {
+  ) { }
+
+
+  ngOnInit(): void {
+
+    const course: Course = this.route.snapshot.data['course'];
+    this.formGroup = this.formBuilder.group({
+      _id: [course._id],
+      name: [
+        course.name,
+        [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(50)
+        ]
+      ],
+      category: [
+        course.category,
+        [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(10)
+        ]
+      ],
+      lessons: this.formBuilder.array(this.getLessons(course))
+    });
 
   }
 
-  ngOnInit(): void {
-    const course: Course = this.route.snapshot.data['course'];
-    this.formGroup.setValue({
-      _id: course._id,
-      name: course.name,
-      category: course.category
+  private getLessons(
+    course: Course
+  ) {
+
+    const lessons = [];
+
+    if(course?.lessons) {
+      course.lessons.forEach(lesson => lessons.push(this.createLesson(lesson)));
+    } else {
+      lessons.push(this.createLesson());
+    }
+
+    return lessons;
+  }
+
+  private createLesson(
+    lesson: Lesson = {
+      id: '',
+      name: '',
+      youtubeUrl: ''}
+  ) {
+
+    return this.formBuilder.group({
+      id: [lesson.id],
+      name: [lesson.name],
+      youtubeUrl: [lesson.youtubeUrl]
     });
+
   }
 
   onAdd() {
@@ -73,9 +103,6 @@ export class CourseFormComponent {
       '',
       { duration: 5000 }
     );
-    // this.dialog.open(ErrorDialogComponent, {
-    //   data: errorMsg
-    // })
   }
 
   onCancel() {
@@ -84,20 +111,22 @@ export class CourseFormComponent {
 
   getErrorMessage(fieldName: string) {
     const field = this.formGroup.get(fieldName);
-    console.log(field?.value);
 
     if(field?.hasError('required')) {
       return 'Field can not be empty.'
     }
+
     if(field?.hasError('minlength')) {
       const requiredLength: number = field.errors ? field.errors['minlength']['requiredLength'] : 2;
       console.log(requiredLength);
       return `Field need have minimun ${requiredLength} characteres.`;
     }
+
     if(field?.hasError('maxlength')) {
       const requiredLength: number = field.errors ? field.errors['maxlength']['requiredLength'] : 50;
       return `Field can have maximum ${requiredLength} characteres.`;
     }
+
     return 'Invalid input.'
   }
 
