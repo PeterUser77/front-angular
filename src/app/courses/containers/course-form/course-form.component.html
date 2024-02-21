@@ -21,7 +21,68 @@
             <mat-option value="front-end">Front-end</mat-option>
             <mat-option value="back-end">Back-end</mat-option>
           </mat-select>
+          <mat-error *ngIf="formGroup.get('category')?.invalid">
+            {{ getErrorMessage("category") }}
+          </mat-error>
         </mat-form-field>
+
+        <mat-toolbar>
+            <span>Lessons</span>
+            <button
+              mat-mini-fab color="accent"
+              aria-label="Add Lesson"
+              (click)="onAddLesson()">
+              <mat-icon>add</mat-icon>
+            </button>
+        </mat-toolbar>
+
+        <mat-error
+          *ngIf="isFormArrayRequiredValid()"
+          class="form-array-error">
+          Lesson is empty.
+        </mat-error>
+
+        <table
+          formArrayName="lessons"
+          *ngFor="let lesson of getLessonsFormArray(); let i = index"
+        >
+          <tr [formGroupName]="i">
+            <td>
+              <mat-form-field class="full-width">
+                <mat-label>Lesson</mat-label>
+                <input matInput formControlName="name" />
+
+                <mat-error *ngIf="getLessonsFormArray()[i].get('name')?.invalid">
+                  Invalid field
+                </mat-error>
+
+              </mat-form-field>
+            </td>
+
+            <td>
+              <mat-form-field class="full-width">
+                <input matInput formControlName="youtubeUrl" />
+                <span matPrefix>https://youtu.be/</span>
+
+                <mat-error *ngIf="getLessonsFormArray()[i].get('youtubeUrl')?.invalid">
+                  Invalid field
+                </mat-error>
+
+              </mat-form-field>
+            </td>
+            <td>
+              <button
+                mat-icon-button
+                color="warn"
+                (click)="onDeleteLesson(i)">
+                <mat-icon aria-label="Delete lesson">delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+
+        </table>
+
+
       </form>
     </mat-card-content>
 

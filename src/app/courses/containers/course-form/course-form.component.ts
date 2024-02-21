@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
+import { FormGroup, NonNullableFormBuilder, UntypedFormArray, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { CourseService } from '../../services/course.service';
@@ -40,15 +40,13 @@ export class CourseFormComponent implements OnInit {
       ],
       category: [
         course.category,
-        [
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(10)
-        ]
+        [ Validators.required ]
       ],
-      lessons: this.formBuilder.array(this.getLessons(course))
+      lessons: this.formBuilder.array(
+        this.getLessons(course),
+        Validators.required
+      )
     });
-
   }
 
   private getLessons(
@@ -75,17 +73,48 @@ export class CourseFormComponent implements OnInit {
 
     return this.formBuilder.group({
       id: [lesson.id],
-      name: [lesson.name],
-      youtubeUrl: [lesson.youtubeUrl]
+      name: [
+        lesson.name, [
+          Validators.required,
+          Validators.minLength(5),
+          Validators.maxLength(50)
+        ]
+      ],
+      youtubeUrl: [
+        lesson.youtubeUrl,
+        [
+          Validators.required,
+          Validators.minLength(10),
+          Validators.maxLength(11)
+        ]
+      ]
     });
 
   }
 
+  getLessonsFormArray() {
+    return (<UntypedFormArray>this.formGroup.get('lessons')).controls;
+  }
+
+  onAddLesson() {
+    const lessons = this.formGroup.get('lessons') as UntypedFormArray;
+    lessons.push(this.createLesson());
+  }
+
+  onDeleteLesson(index: number) {
+    const lessons = this.formGroup.get('lessons') as UntypedFormArray;
+    lessons.removeAt(index);
+  }
+
   onAdd() {
-    this.courseService.add(this.formGroup.value).subscribe(
-      succes => this.onSuccess(),
-      error => this.onError()
-    );
+    if(this.formGroup.valid) {
+      this.courseService.add(this.formGroup.value).subscribe(
+        succes => this.onSuccess(),
+        error => this.onError()
+      );
+    } else {
+      alert('Invalid form')
+    }
   }
 
   onSuccess() {
@@ -128,6 +157,11 @@ export class CourseFormComponent implements OnInit {
     }
 
     return 'Invalid input.'
+  }
+
+  isFormArrayRequiredValid() {
+    const lessons = this.formGroup.get('lessons') as UntypedFormArray;
+    return !lessons.valid && lessons.hasError('required') && lessons.touched;
   }
 
 }
