@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { first } from 'rxjs/operators';
+import { first, tap } from 'rxjs/operators';
 import { Course } from '../model/course';
+import { CoursePage } from '../model/course-page';
 
 @Injectable({
   providedIn: 'root'
@@ -9,14 +10,16 @@ import { Course } from '../model/course';
 export class CourseService {
 
   private readonly API = 'api/courses';
+  private cache: Course[] = [];
 
   constructor(private httpClient: HttpClient) { }
 
-  findAll() {
-    return this.httpClient.get<Course[]>(this.API)
+  findAll(page = 0, element = 10) {
+    return this.httpClient.get<CoursePage>(this.API, { params: { page, element } })
       .pipe(
         // delay(5000),
-        first()
+        first(),
+        tap(data => (this.cache = data.courses))
       );
   }
 

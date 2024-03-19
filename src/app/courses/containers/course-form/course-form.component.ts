@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CourseService } from '../../services/course.service';
 import { Course } from '../../model/course';
 import { Lesson } from '../../model/lesson';
+import { FormUtilsService } from '../../../shared/form/form-utils.service';
 
 @Component({
   selector: 'app-course-form',
@@ -21,7 +22,8 @@ export class CourseFormComponent implements OnInit {
     private courseService: CourseService,
     private snack: MatSnackBar,
     private location: Location,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public formUtils: FormUtilsService
   ) { }
 
 
@@ -106,14 +108,16 @@ export class CourseFormComponent implements OnInit {
     lessons.removeAt(index);
   }
 
-  onAdd() {
+  onSubmit() {
     if(this.formGroup.valid) {
       this.courseService.add(this.formGroup.value).subscribe(
         succes => this.onSuccess(),
         error => this.onError()
       );
     } else {
-      alert('Invalid form')
+      this.formUtils.validateAllFormsFields(
+        this.formGroup
+      );
     }
   }
 
@@ -136,32 +140,6 @@ export class CourseFormComponent implements OnInit {
 
   onCancel() {
     this.location.back();
-  }
-
-  getErrorMessage(fieldName: string) {
-    const field = this.formGroup.get(fieldName);
-
-    if(field?.hasError('required')) {
-      return 'Field can not be empty.'
-    }
-
-    if(field?.hasError('minlength')) {
-      const requiredLength: number = field.errors ? field.errors['minlength']['requiredLength'] : 2;
-      console.log(requiredLength);
-      return `Field need have minimun ${requiredLength} characteres.`;
-    }
-
-    if(field?.hasError('maxlength')) {
-      const requiredLength: number = field.errors ? field.errors['maxlength']['requiredLength'] : 50;
-      return `Field can have maximum ${requiredLength} characteres.`;
-    }
-
-    return 'Invalid input.'
-  }
-
-  isFormArrayRequiredValid() {
-    const lessons = this.formGroup.get('lessons') as UntypedFormArray;
-    return !lessons.valid && lessons.hasError('required') && lessons.touched;
   }
 
 }

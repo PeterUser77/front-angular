@@ -1,12 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Course } from '../../model/course';
 import { CourseService } from '../../services/course.service';
-import { Observable, catchError, of } from 'rxjs';
+import { Observable, catchError, of, tap } from 'rxjs';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ErrorDialogComponent } from '../../../shared/components/error-dialog/error-dialog.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfirmationDialogComponent } from '../../components/confirmation-dialog/confirmation-dialog.component';
+import { CoursePage } from '../../model/course-page';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-courses',
@@ -15,7 +17,12 @@ import { ConfirmationDialogComponent } from '../../components/confirmation-dialo
 })
 export class CoursesComponent {
 
-  public courses$: Observable<Course[]> | null = null;
+  courses$: Observable<CoursePage> | null = null;
+
+  page = 0;
+  element = 10;
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
     private coursesService: CourseService,
@@ -74,13 +81,21 @@ export class CoursesComponent {
     )
   }
 
-  private refresh() {
-    this.courses$ = this.coursesService.findAll().pipe(
-      catchError(error => {
-        this.onError('Could not load courses.')
-        return of([])
-      })
-    );
+  refresh(pageEvent: PageEvent = { length: 0, pageIndex: 0, pageSize: 10 }) {
+    this.courses$ = this.coursesService
+      .findAll(
+        pageEvent.pageIndex,
+        pageEvent.pageSize)
+      .pipe(
+        tap(() => {
+          this.page = pageEvent.pageIndex;
+          this.element = pageEvent.pageSize;
+        }),
+        catchError(() => {
+          this.onError('Error loading courses.');
+          return of({ courses: [], totalElements: 0, totalPages: 0} as CoursePage);
+        })
+      );
   }
 
 
