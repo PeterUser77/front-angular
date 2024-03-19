@@ -14,7 +14,7 @@ import { CoursesListComponent } from '../../components/courses-list/courses-list
 import { MatIcon } from '@angular/material/icon';
 import { MatMiniFabButton } from '@angular/material/button';
 import { MatToolbar } from '@angular/material/toolbar';
-import { NgIf, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { MatCard } from '@angular/material/card';
 
 @Component({
@@ -22,7 +22,7 @@ import { MatCard } from '@angular/material/card';
     templateUrl: './courses.component.html',
     styleUrl: './courses.component.scss',
     standalone: true,
-    imports: [MatCard, NgIf, MatToolbar, MatMiniFabButton, MatIcon, CoursesListComponent, MatPaginator, MatProgressSpinner, AsyncPipe]
+    imports: [MatCard, MatToolbar, MatMiniFabButton, MatIcon, CoursesListComponent, MatPaginator, MatProgressSpinner, AsyncPipe]
 })
 export class CoursesComponent {
 
